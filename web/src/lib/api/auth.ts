@@ -1,4 +1,4 @@
-import { apiJson } from "./client";
+import { ApiError, apiJson, getApiBaseUrl } from "./client";
 
 export type AuthUser = {
   id: string;
@@ -32,4 +32,39 @@ export async function registerRequest(input: {
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+export async function logoutRequest(): Promise<{ ok: boolean }> {
+  return apiJson<{ ok: boolean }>("/auth/logout", {
+    method: "POST",
+  });
+}
+
+/** Sesión vía cookie httpOnly en el API: sin cookie o JWT inválido → 401 → null. */
+export async function fetchCurrentUser(): Promise<AuthUser | null> {
+  const url = `${getApiBaseUrl()}/auth/me`;
+  const res = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const text = await res.text();
+  let data: unknown = null;
+  if (text) {
+    try {
+      data = JSON.parse(text) as unknown;
+    } catch {
+      data = { message: text };
+    }
+  }
+
+  if (res.status === 401) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new ApiError(res.status, data);
+  }
+
+  return data as AuthUser;
 }
