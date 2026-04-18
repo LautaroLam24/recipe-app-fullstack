@@ -45,6 +45,15 @@ export class RecipesController {
     return this.recipes.updateRecipe(user.userId, id, dto);
   }
 
+  @Get('details/:id')
+  @UseGuards(AuthGuard('jwt'))
+  getMyById(
+    @CurrentUser() user: { userId: string },
+    @Param('id') id: string,
+  ) {
+    return this.recipes.getMyRecipe(user.userId, id);
+  }
+
   @Get(':publicId')
   getPublic(@Param('publicId') publicId: string) {
     return this.recipes.getPublicRecipe(publicId);
