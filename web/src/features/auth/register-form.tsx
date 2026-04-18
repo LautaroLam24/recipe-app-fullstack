@@ -2,15 +2,19 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ApiError } from "@/lib/api/client";
 import { registerRequest } from "@/lib/api/auth";
+import { useAuth } from "@/features/auth/auth-context";
 import { registerSchema, type RegisterValues } from "./schemas";
+import { resolveReturnPath } from "./return-path";
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { refresh } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -29,9 +33,11 @@ export function RegisterForm() {
     setRootError(null);
     try {
       await registerRequest(values);
+      await refresh();
       setSuccess(true);
       setTimeout(() => {
-        router.push("/");
+        const dest = resolveReturnPath(searchParams.get("from"));
+        router.push(dest);
         router.refresh();
       }, 700);
     } catch (e) {
@@ -177,7 +183,14 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-zinc-600">
         ¿Ya tenés cuenta?{" "}
-        <Link href="/login" className="font-medium text-zinc-900 underline">
+        <Link
+          href={
+            searchParams.get("from")
+              ? `/login?from=${encodeURIComponent(searchParams.get("from")!)}`
+              : "/login"
+          }
+          className="font-medium text-zinc-900 underline"
+        >
           Iniciá sesión
         </Link>
       </p>
