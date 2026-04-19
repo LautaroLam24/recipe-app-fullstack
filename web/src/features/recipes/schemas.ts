@@ -13,6 +13,16 @@ export const recipeSchema = z.object({
       }),
     )
     .min(1, "Agregá al menos un ingrediente"),
+  steps: z
+    .array(
+      z.object({
+        text: z
+          .string()
+          .min(1, "El paso no puede estar vacío")
+          .max(2000),
+      }),
+    )
+    .min(1, "Agregá al menos un paso"),
 });
 
 export type RecipeValues = z.infer<typeof recipeSchema>;

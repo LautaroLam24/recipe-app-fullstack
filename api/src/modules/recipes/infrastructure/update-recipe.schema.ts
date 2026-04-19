@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+const stepSchema = z.object({
+  position: z.number().int().min(0),
+  text: z.string().min(1).max(2000),
+});
+
 export const updateRecipeSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().min(1).max(2000).optional(),
@@ -12,4 +17,5 @@ export const updateRecipeSchema = z.object({
     )
     .min(1)
     .optional(),
+  steps: z.array(stepSchema).min(1).optional(),
 });

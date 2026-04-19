@@ -13,6 +13,7 @@ const publicSelect = {
   publicId: true,
   title: true,
   description: true,
+  imageUrl: true,
   createdAt: true,
   updatedAt: true,
 };
@@ -20,6 +21,10 @@ const publicSelect = {
 const withIngredientsSelect = {
   ...publicSelect,
   ingredients: {
+    orderBy: { position: 'asc' as const },
+    select: { id: true, position: true, text: true },
+  },
+  steps: {
     orderBy: { position: 'asc' as const },
     select: { id: true, position: true, text: true },
   },
@@ -37,6 +42,7 @@ export class PrismaRecipeRepository implements RecipeRepository {
         title: data.title,
         description: data.description,
         ingredients: { create: data.ingredients },
+        steps: { create: data.steps },
       },
       select: withIngredientsSelect,
     }) as Promise<RecipeWithIngredients>;
@@ -69,13 +75,20 @@ export class PrismaRecipeRepository implements RecipeRepository {
       if (data.ingredients !== undefined) {
         await tx.recipeIngredient.deleteMany({ where: { recipeId: id } });
       }
+      if (data.steps !== undefined) {
+        await tx.recipeStep.deleteMany({ where: { recipeId: id } });
+      }
       return tx.recipe.update({
         where: { id },
         data: {
           ...(data.title !== undefined && { title: data.title }),
           ...(data.description !== undefined && { description: data.description }),
+          ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
           ...(data.ingredients !== undefined && {
             ingredients: { create: data.ingredients },
+          }),
+          ...(data.steps !== undefined && {
+            steps: { create: data.steps },
           }),
         },
         select: withIngredientsSelect,

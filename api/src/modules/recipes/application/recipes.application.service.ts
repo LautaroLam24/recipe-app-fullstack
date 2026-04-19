@@ -14,12 +14,14 @@ export type CreateRecipeInput = {
   title: string;
   description: string;
   ingredients: { position: number; text: string }[];
+  steps: { position: number; text: string }[];
 };
 
 export type UpdateRecipeInput = {
   title?: string;
   description?: string;
   ingredients?: { position: number; text: string }[];
+  steps?: { position: number; text: string }[];
 };
 
 @Injectable()
@@ -36,6 +38,7 @@ export class RecipesApplicationService {
       title: input.title.trim(),
       description: input.description.trim(),
       ingredients: input.ingredients,
+      steps: input.steps,
     });
   }
 
@@ -59,6 +62,7 @@ export class RecipesApplicationService {
       title: input.title?.trim(),
       description: input.description?.trim(),
       ingredients: input.ingredients,
+      steps: input.steps,
     });
   }
 
@@ -71,6 +75,17 @@ export class RecipesApplicationService {
       throw new ForbiddenException('You do not own this recipe');
     }
     return recipe;
+  }
+
+  async updateRecipeImage(userId: string, recipeId: string, imageUrl: string) {
+    const recipe = await this.recipes.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+    if (recipe.ownerId !== userId) {
+      throw new ForbiddenException('You do not own this recipe');
+    }
+    return this.recipes.update(recipeId, { imageUrl });
   }
 
   async getPublicRecipe(publicId: string) {

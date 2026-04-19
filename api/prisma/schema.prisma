@@ -32,11 +32,13 @@ model Recipe {
   publicId    String   @unique @map("public_id")
   title       String
   description String
+  imageUrl    String?  @map("image_url")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   owner       User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ingredients RecipeIngredient[]
+  steps       RecipeStep[]
 
   @@index([ownerId])
   @@index([publicId])
@@ -54,4 +56,17 @@ model RecipeIngredient {
   @@index([recipeId])
   @@unique([recipeId, position])
   @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id       String @id @default(uuid())
+  recipeId String @map("recipe_id")
+  position Int
+  text     String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@unique([recipeId, position])
+  @@map("recipe_steps")
 }

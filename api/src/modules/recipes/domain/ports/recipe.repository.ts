@@ -8,12 +8,15 @@ export type CreateRecipeData = {
   title: string;
   description: string;
   ingredients: { position: number; text: string }[];
+  steps: { position: number; text: string }[];
 };
 
 export type UpdateRecipeData = {
   title?: string;
   description?: string;
+  imageUrl?: string;
   ingredients?: { position: number; text: string }[];
+  steps?: { position: number; text: string }[];
 };
 
 export interface RecipeRepository {

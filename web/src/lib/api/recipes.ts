@@ -1,6 +1,12 @@
-import { apiJson } from "./client";
+import { apiJson, apiUpload } from "./client";
 
 export type RecipeIngredient = {
+  id: string;
+  position: number;
+  text: string;
+};
+
+export type RecipeStep = {
   id: string;
   position: number;
   text: string;
@@ -12,18 +18,21 @@ export type Recipe = {
   publicId: string;
   title: string;
   description: string;
+  imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
 export type RecipeWithIngredients = Recipe & {
   ingredients: RecipeIngredient[];
+  steps: RecipeStep[];
 };
 
 export type RecipeInput = {
   title: string;
   description: string;
   ingredients: { position: number; text: string }[];
+  steps: { position: number; text: string }[];
 };
 
 export async function createRecipe(
@@ -59,4 +68,13 @@ export async function getPublicRecipe(
   publicId: string,
 ): Promise<RecipeWithIngredients> {
   return apiJson<RecipeWithIngredients>(`/recipes/${publicId}`);
+}
+
+export async function uploadRecipeImage(
+  id: string,
+  file: File,
+): Promise<RecipeWithIngredients> {
+  const formData = new FormData();
+  formData.append("image", file);
+  return apiUpload<RecipeWithIngredients>(`/recipes/${id}/image`, formData);
 }
