@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Recipe } from "@/lib/api/recipes";
+import { getApiBaseUrl } from "@/lib/api/client";
 
 type Props = {
   recipe: Recipe;
@@ -14,33 +16,52 @@ function formatDate(dateString: string) {
 }
 
 export function RecipeCard({ recipe }: Props) {
+  const imageUrl = recipe.imageUrl
+    ? `${getApiBaseUrl()}${recipe.imageUrl}`
+    : null;
+
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 transition-shadow hover:shadow-md">
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-start justify-between gap-4">
-          <h2 className="font-semibold leading-tight text-zinc-900">
-            {recipe.title}
-          </h2>
-          <span className="mt-0.5 shrink-0 text-xs text-zinc-400">
-            {formatDate(recipe.createdAt)}
-          </span>
+    <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white transition-shadow hover:shadow-md">
+      <div className="flex gap-4 p-5">
+        <div className="flex flex-1 flex-col gap-2 min-w-0">
+          <div className="flex items-start justify-between gap-4">
+            <h2 className="text-[15px] font-semibold leading-tight text-zinc-900">
+              {recipe.title}
+            </h2>
+            <time className="shrink-0 pt-0.5 text-xs tabular-nums text-zinc-400">
+              {formatDate(recipe.createdAt)}
+            </time>
+          </div>
+          {recipe.description && (
+            <p className="line-clamp-2 text-sm leading-relaxed text-zinc-500">
+              {recipe.description}
+            </p>
+          )}
         </div>
-        <p className="line-clamp-2 text-sm leading-relaxed text-zinc-500">
-          {recipe.description}
-        </p>
+
+        {imageUrl && (
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl">
+            <Image
+              src={imageUrl}
+              alt={recipe.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
       </div>
 
-      <div className="flex items-center gap-1 border-t border-zinc-100 pt-3">
+      <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3">
         <Link
           href={`/recipes/${recipe.id}/edit`}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100"
+          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-700"
         >
           Editar
         </Link>
         <Link
           href={`/r/${recipe.publicId}`}
           target="_blank"
-          className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-100"
+          className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-600"
         >
           Link público
           <svg

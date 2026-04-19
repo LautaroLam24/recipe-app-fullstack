@@ -1,3 +1,4 @@
+import { AppFooter } from "@/components/app-footer";
 import { AppNav } from "@/components/app-nav";
 import { AuthProvider } from "@/features/auth/auth-context";
 import type { Metadata } from "next";
@@ -44,6 +45,7 @@ export default function RootLayout({
             </div>
           </header>
           <div className="flex flex-1 flex-col">{children}</div>
+          <AppFooter />
         </AuthProvider>
       </body>
     </html>
