@@ -37,6 +37,31 @@ function formatApiMessage(body: unknown): string {
   return "No se pudo completar la solicitud.";
 }
 
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    credentials: "include",
+    body: formData,
+  });
+
+  const text = await res.text();
+  let data: unknown = null;
+  if (text) {
+    try {
+      data = JSON.parse(text) as unknown;
+    } catch {
+      data = { message: text };
+    }
+  }
+
+  if (!res.ok) {
+    throw new ApiError(res.status, data);
+  }
+
+  return data as T;
+}
+
 export async function apiJson<T>(
   path: string,
   init: RequestInit = {},
