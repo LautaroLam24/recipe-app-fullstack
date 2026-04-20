@@ -23,6 +23,7 @@ function makeService() {
     findById: jest.fn(),
     findByPublicId: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
     findAll: jest.fn(),
   };
 
