@@ -14,6 +14,7 @@ import {
   logoutRequest,
   type AuthUser,
 } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 type AuthStatus = "loading" | "ready" | "error";
 
@@ -53,11 +54,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(next);
       setStatus("ready");
       setErrorMessage(null);
-    } catch {
-      setStatus("error");
-      setErrorMessage(
-        "No se pudo verificar la sesión. ¿La API está disponible?",
-      );
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setUser(null);
+        setStatus("ready");
+        setErrorMessage(null);
+      } else {
+        setStatus("error");
+        setErrorMessage(
+          "No se pudo verificar la sesión. ¿La API está disponible?",
+        );
+      }
     }
   }, []);
 
