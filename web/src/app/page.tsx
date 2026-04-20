@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/auth-context";
 import { getPublicFeed, type PublicFeedRecipe } from "@/lib/api/recipes";
-import { getApiBaseUrl } from "@/lib/api/client";
+import { resolveImageUrl } from "@/lib/api/client";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,9 +16,7 @@ function formatDate(dateString: string) {
 }
 
 function FeedCard({ recipe }: { recipe: PublicFeedRecipe }) {
-  const imageUrl = recipe.imageUrl
-    ? `${getApiBaseUrl()}${recipe.imageUrl}`
-    : null;
+  const imageUrl = resolveImageUrl(recipe.imageUrl);
 
   return (
     <Link

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPublicRecipe } from "@/lib/api/recipes";
-import { getApiBaseUrl } from "@/lib/api/client";
+import { resolveImageUrl } from "@/lib/api/client";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,9 +29,7 @@ export default async function PublicRecipePage({ params }: Props) {
     notFound();
   }
 
-  const imageUrl = recipe.imageUrl
-    ? `${getApiBaseUrl()}${recipe.imageUrl}`
-    : null;
+  const imageUrl = resolveImageUrl(recipe.imageUrl);
 
   return (
     <main className="flex-1 bg-zinc-50">

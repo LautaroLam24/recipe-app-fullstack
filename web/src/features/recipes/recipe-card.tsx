@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Recipe } from "@/lib/api/recipes";
-import { getApiBaseUrl } from "@/lib/api/client";
+import { resolveImageUrl } from "@/lib/api/client";
 
 type Props = {
   recipe: Recipe;
@@ -17,9 +17,7 @@ function formatDate(dateString: string) {
 }
 
 export function RecipeCard({ recipe, onDelete }: Props) {
-  const imageUrl = recipe.imageUrl
-    ? `${getApiBaseUrl()}${recipe.imageUrl}`
-    : null;
+  const imageUrl = resolveImageUrl(recipe.imageUrl);
 
   return (
     <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white transition-shadow hover:shadow-md">

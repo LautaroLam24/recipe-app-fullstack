@@ -9,9 +9,10 @@ import {
   getMyRecipeById,
   updateRecipe,
   uploadRecipeImage,
+  toPositioned,
   type RecipeWithIngredients,
 } from "@/lib/api/recipes";
-import { ApiError, getApiBaseUrl } from "@/lib/api/client";
+import { ApiError, resolveImageUrl } from "@/lib/api/client";
 import type { RecipeValues } from "@/features/recipes/schemas";
 
 export default function EditRecipePage() {
@@ -44,14 +45,8 @@ export default function EditRecipePage() {
       await updateRecipe(id, {
         title: data.title,
         description: data.description,
-        ingredients: data.ingredients.map((ing, i) => ({
-          position: i,
-          text: ing.text,
-        })),
-        steps: data.steps.map((step, i) => ({
-          position: i,
-          text: step.text,
-        })),
+        ingredients: toPositioned(data.ingredients),
+        steps: toPositioned(data.steps),
       });
       router.push("/recipes");
       router.refresh();
@@ -81,9 +76,7 @@ export default function EditRecipePage() {
     }
   }
 
-  const imageUrl = recipe?.imageUrl
-    ? `${getApiBaseUrl()}${recipe.imageUrl}`
-    : null;
+  const imageUrl = resolveImageUrl(recipe?.imageUrl ?? null);
 
   return (
     <main className="flex-1 bg-zinc-50">

@@ -37,14 +37,13 @@ function formatApiMessage(body: unknown): string {
   return "No se pudo completar la solicitud.";
 }
 
-export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
-  const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
-  const res = await fetch(url, {
-    method: "PATCH",
-    credentials: "include",
-    body: formData,
-  });
+export function resolveImageUrl(imageUrl: string | null): string | null {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith("http")) return imageUrl;
+  return `${getApiBaseUrl()}${imageUrl}`;
+}
 
+async function parseResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
   let data: unknown = null;
   if (text) {
@@ -54,12 +53,20 @@ export async function apiUpload<T>(path: string, formData: FormData): Promise<T>
       data = { message: text };
     }
   }
-
   if (!res.ok) {
     throw new ApiError(res.status, data);
   }
-
   return data as T;
+}
+
+export async function apiUpload<T>(path: string, formData: FormData): Promise<T> {
+  const url = `${getApiBaseUrl()}${path.startsWith("/") ? path : `/${path}`}`;
+  const res = await fetch(url, {
+    method: "PATCH",
+    credentials: "include",
+    body: formData,
+  });
+  return parseResponse<T>(res);
 }
 
 export async function apiJson<T>(
@@ -75,20 +82,5 @@ export async function apiJson<T>(
       ...(init.headers ?? {}),
     },
   });
-
-  const text = await res.text();
-  let data: unknown = null;
-  if (text) {
-    try {
-      data = JSON.parse(text) as unknown;
-    } catch {
-      data = { message: text };
-    }
-  }
-
-  if (!res.ok) {
-    throw new ApiError(res.status, data);
-  }
-
-  return data as T;
+  return parseResponse<T>(res);
 }
