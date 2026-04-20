@@ -25,3 +25,12 @@ export type RecipeWithIngredients = Recipe & {
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
 };
+
+export type PublicFeedRecipe = {
+  publicId: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  createdAt: Date;
+  owner: { firstName: string; lastName: string };
+};

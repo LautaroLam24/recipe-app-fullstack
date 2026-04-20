@@ -88,6 +88,11 @@ export class RecipesController {
     return this.recipes.updateRecipe(user.userId, id, dto);
   }
 
+  @Get('feed')
+  getPublicFeed() {
+    return this.recipes.getPublicFeed();
+  }
+
   @Get('details/:id')
   @UseGuards(AuthGuard('jwt'))
   getMyById(

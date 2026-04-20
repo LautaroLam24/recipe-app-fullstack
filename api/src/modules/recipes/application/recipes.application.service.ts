@@ -95,4 +95,8 @@ export class RecipesApplicationService {
     }
     return recipe;
   }
+
+  async getPublicFeed() {
+    return this.recipes.findAll();
+  }
 }

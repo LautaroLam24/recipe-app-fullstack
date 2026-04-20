@@ -5,7 +5,7 @@ import type {
   RecipeRepository,
   UpdateRecipeData,
 } from '../domain/ports/recipe.repository';
-import type { Recipe, RecipeWithIngredients } from '../domain/recipe.types';
+import type { PublicFeedRecipe, Recipe, RecipeWithIngredients } from '../domain/recipe.types';
 
 const publicSelect = {
   id: true,
@@ -94,5 +94,19 @@ export class PrismaRecipeRepository implements RecipeRepository {
         select: withIngredientsSelect,
       });
     }) as Promise<RecipeWithIngredients>;
+  }
+
+  async findAll(): Promise<PublicFeedRecipe[]> {
+    return this.prisma.recipe.findMany({
+      select: {
+        publicId: true,
+        title: true,
+        description: true,
+        imageUrl: true,
+        createdAt: true,
+        owner: { select: { firstName: true, lastName: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 }

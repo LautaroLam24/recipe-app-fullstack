@@ -70,6 +70,19 @@ export async function getPublicRecipe(
   return apiJson<RecipeWithIngredients>(`/recipes/${publicId}`);
 }
 
+export type PublicFeedRecipe = {
+  publicId: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  createdAt: string;
+  owner: { firstName: string; lastName: string };
+};
+
+export async function getPublicFeed(): Promise<PublicFeedRecipe[]> {
+  return apiJson<PublicFeedRecipe[]>("/recipes/feed");
+}
+
 export async function uploadRecipeImage(
   id: string,
   file: File,

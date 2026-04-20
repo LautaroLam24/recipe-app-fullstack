@@ -1,4 +1,4 @@
-import type { Recipe, RecipeWithIngredients } from '../recipe.types';
+import type { PublicFeedRecipe, Recipe, RecipeWithIngredients } from '../recipe.types';
 
 export const RECIPE_REPOSITORY = Symbol('RECIPE_REPOSITORY');
 
@@ -25,4 +25,5 @@ export interface RecipeRepository {
   findById(id: string): Promise<RecipeWithIngredients | null>;
   findByPublicId(publicId: string): Promise<RecipeWithIngredients | null>;
   update(id: string, data: UpdateRecipeData): Promise<RecipeWithIngredients>;
+  findAll(): Promise<PublicFeedRecipe[]>;
 }
