@@ -19,17 +19,17 @@ Aplicación fullstack de recetas construida como challenge técnico. Los usuario
 
 ## Stack
 
-| Capa | Tecnología |
-|---|---|
-| Backend | Node.js + NestJS 11 |
-| ORM | Prisma 7 + PostgreSQL |
-| Frontend | Next.js 16 (App Router) + React 19 |
-| Formularios | React Hook Form 7 + Zod 4 |
-| Auth | JWT en cookie httpOnly |
-| Hash de contraseñas | Argon2id |
-| Estilos | Tailwind CSS 4 |
-| Imágenes | Cloudinary |
-| Base de datos (prod) | Supabase (PostgreSQL) |
+| Capa                 | Tecnología                         |
+| -------------------- | ---------------------------------- |
+| Backend              | Node.js + NestJS 11                |
+| ORM                  | Prisma 7 + PostgreSQL              |
+| Frontend             | Next.js 16 (App Router) + React 19 |
+| Formularios          | React Hook Form 7 + Zod 4          |
+| Auth                 | JWT en cookie httpOnly             |
+| Hash de contraseñas  | Argon2id                           |
+| Estilos              | Tailwind CSS 4                     |
+| Imágenes             | Cloudinary                         |
+| Base de datos (prod) | Supabase (PostgreSQL)              |
 
 ---
 
@@ -55,7 +55,7 @@ Application    →  lógica de negocio (servicios inyectables)
 Infrastructure →  controllers HTTP, repositorios Prisma, schemas Zod
 ```
 
-La lógica de negocio no depende de Prisma ni de NestJS. Cambiar el ORM solo afecta la capa de infraestructura.
+La lógica de negocio no depende de Prisma ni de NestJS. Cambiar el ORM solo impacta la capa de infraestructura, sin afectar la lógica de negocio.
 
 ### Frontend — Feature-based
 
@@ -71,14 +71,14 @@ Auth global via React Context. Sesión inicializada desde `/auth/me` al cargar l
 
 ## Decisiones técnicas
 
-| Decisión | Motivo |
-|---|---|
-| Cookie `httpOnly` para JWT | Previene robo de token por XSS |
-| Argon2id para contraseñas | Memory-hard, resistente a ataques GPU |
-| `publicId` separado del UUID interno | El ID interno nunca se expone en URLs públicas |
-| Estrategia full-replace en ingredientes/pasos | Simplicidad sin lógica de diff |
-| `memoryStorage` + Cloudinary | Filesystem efímero en Railway — las imágenes en disco no sobreviven redeploys |
-| `sameSite: none` en producción | Necesario para cookies cross-origin entre Vercel y Railway |
+| Decisión                                      | Motivo                                                                        |
+| --------------------------------------------- | ----------------------------------------------------------------------------- |
+| Cookie `httpOnly` para JWT                    | Previene robo de token por XSS                                                |
+| Argon2id para contraseñas                     | Memory-hard, resistente a ataques GPU                                         |
+| `publicId` separado del UUID interno          | El ID interno nunca se expone en URLs públicas                                |
+| Estrategia full-replace en ingredientes/pasos | Simplicidad sin lógica de diff                                                |
+| `memoryStorage` + Cloudinary                  | Filesystem efímero en Railway — las imágenes en disco no sobreviven redeploys |
+| `sameSite: none` en producción                | Necesario para cookies cross-origin entre Vercel y Railway                    |
 
 ---
 
@@ -134,33 +134,33 @@ npm run dev
 
 ### Backend (`api/.env`)
 
-| Variable | Descripción |
-|---|---|
-| `DATABASE_URL` | Connection string PostgreSQL |
-| `JWT_SECRET` | Secreto para firmar JWTs |
-| `JWT_EXPIRES_IN` | Expiración del token (ej. `7d`) |
-| `COOKIE_MAX_AGE_MS` | Duración de la cookie en ms |
-| `WEB_ORIGIN` | URL del frontend (para CORS) |
-| `CLOUDINARY_CLOUD_NAME` | Cloud name de Cloudinary |
-| `CLOUDINARY_API_KEY` | API key de Cloudinary |
-| `CLOUDINARY_API_SECRET` | API secret de Cloudinary |
+| Variable                | Descripción                     |
+| ----------------------- | ------------------------------- |
+| `DATABASE_URL`          | Connection string PostgreSQL    |
+| `JWT_SECRET`            | Secreto para firmar JWTs        |
+| `JWT_EXPIRES_IN`        | Expiración del token (ej. `7d`) |
+| `COOKIE_MAX_AGE_MS`     | Duración de la cookie en ms     |
+| `WEB_ORIGIN`            | URL del frontend (para CORS)    |
+| `CLOUDINARY_CLOUD_NAME` | Cloud name de Cloudinary        |
+| `CLOUDINARY_API_KEY`    | API key de Cloudinary           |
+| `CLOUDINARY_API_SECRET` | API secret de Cloudinary        |
 
 ### Frontend (`web/.env.local`)
 
-| Variable | Descripción |
-|---|---|
+| Variable              | Descripción                                             |
+| --------------------- | ------------------------------------------------------- |
 | `NEXT_PUBLIC_API_URL` | URL base del backend (default: `http://localhost:3001`) |
 
 ---
 
 ## Deploy
 
-| Servicio | Plataforma |
-|---|---|
-| Frontend | Vercel (auto-deploy desde `main`) |
-| Backend | Railway (auto-deploy desde `main`) |
-| Base de datos | Supabase (PostgreSQL) |
-| Imágenes | Cloudinary |
+| Servicio      | Plataforma                         |
+| ------------- | ---------------------------------- |
+| Frontend      | Vercel (auto-deploy desde `main`)  |
+| Backend       | Railway (auto-deploy desde `main`) |
+| Base de datos | Supabase (PostgreSQL)              |
+| Imágenes      | Cloudinary                         |
 
 ---
 
