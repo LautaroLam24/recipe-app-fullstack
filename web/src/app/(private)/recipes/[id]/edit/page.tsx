@@ -148,6 +148,7 @@ export default function EditRecipePage() {
                     src={imageUrl}
                     alt="Imagen de portada"
                     fill
+                    unoptimized
                     className="object-cover"
                   />
                 </div>
