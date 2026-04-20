@@ -33,21 +33,20 @@ export default async function PublicRecipePage({ params }: Props) {
 
   return (
     <main className="flex-1 bg-zinc-50">
-      {/* Hero image */}
-      {imageUrl && (
-        <div className="relative h-64 w-full overflow-hidden bg-zinc-100 sm:h-80">
-          <Image
-            src={imageUrl}
-            alt={recipe.title}
-            fill
-            unoptimized
-            className="object-cover"
-            priority
-          />
-        </div>
-      )}
-
       <div className="mx-auto w-full max-w-5xl px-4 py-10 flex flex-col gap-8">
+        {/* Hero image */}
+        {imageUrl && (
+          <div className="relative w-full aspect-video overflow-hidden rounded-2xl bg-zinc-100">
+            <Image
+              src={imageUrl}
+              alt={recipe.title}
+              fill
+              unoptimized
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
         {/* Title + description */}
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-zinc-900">{recipe.title}</h1>
