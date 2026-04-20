@@ -9,7 +9,7 @@ import {
 } from './auth-cookie';
 import { CurrentUser } from './current-user.decorator';
 import { loginSchema } from './login.schema';
-import { parseBody } from './parse-body';
+import { parseBody } from '../../../shared/parse-body';
 import { registerSchema } from './register.schema';
 
 @Controller('auth')

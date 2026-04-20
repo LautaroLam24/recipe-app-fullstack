@@ -20,7 +20,7 @@ import { nanoid } from 'nanoid';
 import { CurrentUser } from '../../auth/infrastructure/current-user.decorator';
 import { RecipesApplicationService } from '../application/recipes.application.service';
 import { createRecipeSchema } from './create-recipe.schema';
-import { parseBody } from './parse-body';
+import { parseBody } from '../../../shared/parse-body';
 import { updateRecipeSchema } from './update-recipe.schema';
 
 const imageStorage = diskStorage({
