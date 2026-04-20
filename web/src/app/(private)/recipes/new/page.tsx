@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { RecipeForm } from "@/features/recipes/recipe-form";
-import { createRecipe, uploadRecipeImage } from "@/lib/api/recipes";
+import { createRecipe, uploadRecipeImage, toPositioned } from "@/lib/api/recipes";
 import { ApiError } from "@/lib/api/client";
 import type { RecipeValues } from "@/features/recipes/schemas";
 
@@ -30,14 +30,8 @@ export default function NewRecipePage() {
       const recipe = await createRecipe({
         title: data.title,
         description: data.description,
-        ingredients: data.ingredients.map((ing, i) => ({
-          position: i,
-          text: ing.text,
-        })),
-        steps: data.steps.map((step, i) => ({
-          position: i,
-          text: step.text,
-        })),
+        ingredients: toPositioned(data.ingredients),
+        steps: toPositioned(data.steps),
       });
 
       if (pendingImage) {

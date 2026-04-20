@@ -87,6 +87,12 @@ export async function getPublicFeed(): Promise<PublicFeedRecipe[]> {
   return apiJson<PublicFeedRecipe[]>("/recipes/feed");
 }
 
+export function toPositioned(
+  items: { text: string }[],
+): { position: number; text: string }[] {
+  return items.map((item, i) => ({ position: i, text: item.text }));
+}
+
 export async function uploadRecipeImage(
   id: string,
   file: File,
