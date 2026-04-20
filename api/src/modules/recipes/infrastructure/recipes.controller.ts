@@ -14,21 +14,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { nanoid } from 'nanoid';
+import { memoryStorage } from 'multer';
 import { CurrentUser } from '../../auth/infrastructure/current-user.decorator';
 import { RecipesApplicationService } from '../application/recipes.application.service';
+import { CloudinaryService } from './cloudinary.service';
 import { createRecipeSchema } from './create-recipe.schema';
 import { parseBody } from '../../../shared/parse-body';
 import { updateRecipeSchema } from './update-recipe.schema';
-
-const imageStorage = diskStorage({
-  destination: './uploads',
-  filename: (_req, _file, cb) => {
-    cb(null, `${nanoid(12)}${extname(_file.originalname)}`);
-  },
-});
 
 function imageFilter(
   _req: Express.Request,
@@ -43,7 +35,10 @@ function imageFilter(
 
 @Controller('recipes')
 export class RecipesController {
-  constructor(private readonly recipes: RecipesApplicationService) {}
+  constructor(
+    private readonly recipes: RecipesApplicationService,
+    private readonly cloudinary: CloudinaryService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
@@ -65,18 +60,19 @@ export class RecipesController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: imageStorage,
+      storage: memoryStorage(),
       fileFilter: imageFilter,
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  uploadImage(
+  async uploadImage(
     @CurrentUser() user: { userId: string },
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) throw new BadRequestException('No se recibió ninguna imagen');
-    return this.recipes.updateRecipeImage(user.userId, id, `/uploads/${file.filename}`);
+    const url = await this.cloudinary.upload(file);
+    return this.recipes.updateRecipeImage(user.userId, id, url);
   }
 
   @Delete(':id')

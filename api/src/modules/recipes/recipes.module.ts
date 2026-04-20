@@ -3,11 +3,13 @@ import { RecipesApplicationService } from './application/recipes.application.ser
 import { RECIPE_REPOSITORY } from './domain/ports/recipe.repository';
 import { PrismaRecipeRepository } from './infrastructure/prisma-recipe.repository';
 import { RecipesController } from './infrastructure/recipes.controller';
+import { CloudinaryService } from './infrastructure/cloudinary.service';
 
 @Module({
   controllers: [RecipesController],
   providers: [
     RecipesApplicationService,
+    CloudinaryService,
     { provide: RECIPE_REPOSITORY, useClass: PrismaRecipeRepository },
   ],
 })
