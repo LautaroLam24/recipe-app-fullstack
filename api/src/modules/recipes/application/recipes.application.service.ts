@@ -9,6 +9,7 @@ import {
   RECIPE_REPOSITORY,
   type RecipeRepository,
 } from '../domain/ports/recipe.repository';
+import type { RecipeWithIngredients } from '../domain/recipe.types';
 
 export type CreateRecipeInput = {
   title: string;
@@ -29,6 +30,20 @@ export class RecipesApplicationService {
   constructor(
     @Inject(RECIPE_REPOSITORY) private readonly recipes: RecipeRepository,
   ) {}
+
+  private async assertOwnership(
+    userId: string,
+    recipeId: string,
+  ): Promise<RecipeWithIngredients> {
+    const recipe = await this.recipes.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+    if (recipe.ownerId !== userId) {
+      throw new ForbiddenException('You do not own this recipe');
+    }
+    return recipe;
+  }
 
   async createRecipe(ownerId: string, input: CreateRecipeInput) {
     const publicId = nanoid(10);
@@ -51,13 +66,7 @@ export class RecipesApplicationService {
     recipeId: string,
     input: UpdateRecipeInput,
   ) {
-    const recipe = await this.recipes.findById(recipeId);
-    if (!recipe) {
-      throw new NotFoundException('Recipe not found');
-    }
-    if (recipe.ownerId !== userId) {
-      throw new ForbiddenException('You do not own this recipe');
-    }
+    await this.assertOwnership(userId, recipeId);
     return this.recipes.update(recipeId, {
       title: input.title?.trim(),
       description: input.description?.trim(),
@@ -67,24 +76,11 @@ export class RecipesApplicationService {
   }
 
   async getMyRecipe(userId: string, recipeId: string) {
-    const recipe = await this.recipes.findById(recipeId);
-    if (!recipe) {
-      throw new NotFoundException('Recipe not found');
-    }
-    if (recipe.ownerId !== userId) {
-      throw new ForbiddenException('You do not own this recipe');
-    }
-    return recipe;
+    return this.assertOwnership(userId, recipeId);
   }
 
   async updateRecipeImage(userId: string, recipeId: string, imageUrl: string) {
-    const recipe = await this.recipes.findById(recipeId);
-    if (!recipe) {
-      throw new NotFoundException('Recipe not found');
-    }
-    if (recipe.ownerId !== userId) {
-      throw new ForbiddenException('You do not own this recipe');
-    }
+    await this.assertOwnership(userId, recipeId);
     return this.recipes.update(recipeId, { imageUrl });
   }
 
@@ -97,13 +93,7 @@ export class RecipesApplicationService {
   }
 
   async deleteRecipe(userId: string, recipeId: string): Promise<void> {
-    const recipe = await this.recipes.findById(recipeId);
-    if (!recipe) {
-      throw new NotFoundException('Recipe not found');
-    }
-    if (recipe.ownerId !== userId) {
-      throw new ForbiddenException('You do not own this recipe');
-    }
+    await this.assertOwnership(userId, recipeId);
     await this.recipes.delete(recipeId);
   }
 
