@@ -20,6 +20,7 @@ type AuthStatus = "loading" | "ready" | "error";
 export type AuthContextValue = {
   user: AuthUser | null;
   status: AuthStatus;
+  loggingOut: boolean;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
   retry: () => Promise<void>;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const load = useCallback(async (mode: "initial" | "refresh") => {
     if (mode === "initial") {
@@ -72,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [load]);
 
   const logout = useCallback(async () => {
+    setLoggingOut(true);
     try {
       await logoutRequest();
     } catch {
@@ -80,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setStatus("ready");
     setErrorMessage(null);
-    router.push("/login");
+    router.push("/");
     router.refresh();
   }, [router]);
 
@@ -88,11 +91,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => ({
       user,
       status,
+      loggingOut,
       refresh,
       logout,
       retry,
     }),
-    [user, status, refresh, logout, retry],
+    [user, status, loggingOut, refresh, logout, retry],
   );
 
   if (status === "error") {

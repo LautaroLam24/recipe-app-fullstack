@@ -13,14 +13,14 @@ function buildLoginRedirect(pathname: string, search: string): string {
  * Protege rutas bajo (private): usa el mismo usuario que resolvió AuthProvider con /auth/me.
  */
 export function PrivateGate({ children }: { children: React.ReactNode }) {
-  const { user, status } = useAuth();
+  const { user, status, loggingOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const search = searchParams.toString();
 
   useEffect(() => {
-    if (status !== "ready") {
+    if (status !== "ready" || loggingOut) {
       return;
     }
     if (user) {
