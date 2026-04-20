@@ -25,5 +25,6 @@ export interface RecipeRepository {
   findById(id: string): Promise<RecipeWithIngredients | null>;
   findByPublicId(publicId: string): Promise<RecipeWithIngredients | null>;
   update(id: string, data: UpdateRecipeData): Promise<RecipeWithIngredients>;
+  delete(id: string): Promise<void>;
   findAll(): Promise<PublicFeedRecipe[]>;
 }

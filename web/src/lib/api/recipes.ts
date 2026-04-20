@@ -79,6 +79,10 @@ export type PublicFeedRecipe = {
   owner: { firstName: string; lastName: string };
 };
 
+export async function deleteRecipe(id: string): Promise<void> {
+  await apiJson<void>(`/recipes/${id}`, { method: "DELETE" });
+}
+
 export async function getPublicFeed(): Promise<PublicFeedRecipe[]> {
   return apiJson<PublicFeedRecipe[]>("/recipes/feed");
 }

@@ -96,6 +96,10 @@ export class PrismaRecipeRepository implements RecipeRepository {
     }) as Promise<RecipeWithIngredients>;
   }
 
+  async delete(id: string): Promise<void> {
+    await this.prisma.recipe.delete({ where: { id } });
+  }
+
   async findAll(): Promise<PublicFeedRecipe[]> {
     return this.prisma.recipe.findMany({
       select: {

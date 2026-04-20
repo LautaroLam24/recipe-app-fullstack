@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { listMyRecipes, type Recipe } from "@/lib/api/recipes";
+import { listMyRecipes, deleteRecipe, type Recipe } from "@/lib/api/recipes";
 import { RecipeCard } from "@/features/recipes/recipe-card";
 
 export default function RecipesPage() {
@@ -21,6 +21,16 @@ export default function RecipesPage() {
   }, []);
 
   const count = recipes.length;
+
+  async function handleDelete(id: string) {
+    if (!window.confirm("¿Eliminar esta receta? Esta acción no se puede deshacer.")) return;
+    try {
+      await deleteRecipe(id);
+      setRecipes((prev) => prev.filter((r) => r.id !== id));
+    } catch {
+      alert("No se pudo eliminar la receta. Intentá de nuevo.");
+    }
+  }
 
   return (
     <main className="flex-1 bg-zinc-50">
@@ -91,7 +101,7 @@ export default function RecipesPage() {
         {status === "ready" && count > 0 && (
           <div className="flex flex-col gap-4">
             {recipes.map((r) => (
-              <RecipeCard key={r.id} recipe={r} />
+              <RecipeCard key={r.id} recipe={r} onDelete={() => handleDelete(r.id)} />
             ))}
           </div>
         )}

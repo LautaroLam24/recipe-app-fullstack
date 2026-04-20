@@ -5,6 +5,7 @@ import { getApiBaseUrl } from "@/lib/api/client";
 
 type Props = {
   recipe: Recipe;
+  onDelete?: () => void;
 };
 
 function formatDate(dateString: string) {
@@ -15,7 +16,7 @@ function formatDate(dateString: string) {
   });
 }
 
-export function RecipeCard({ recipe }: Props) {
+export function RecipeCard({ recipe, onDelete }: Props) {
   const imageUrl = recipe.imageUrl
     ? `${getApiBaseUrl()}${recipe.imageUrl}`
     : null;
@@ -53,12 +54,23 @@ export function RecipeCard({ recipe }: Props) {
       </div>
 
       <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3">
-        <Link
-          href={`/recipes/${recipe.id}/edit`}
-          className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-700"
-        >
-          Editar
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/recipes/${recipe.id}/edit`}
+            className="rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-zinc-700"
+          >
+            Editar
+          </Link>
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50"
+            >
+              Eliminar
+            </button>
+          )}
+        </div>
         <Link
           href={`/r/${recipe.publicId}`}
           target="_blank"

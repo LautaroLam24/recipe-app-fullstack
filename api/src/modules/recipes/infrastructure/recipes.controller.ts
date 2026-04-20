@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -75,6 +77,16 @@ export class RecipesController {
   ) {
     if (!file) throw new BadRequestException('No se recibió ninguna imagen');
     return this.recipes.updateRecipeImage(user.userId, id, `/uploads/${file.filename}`);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @UseGuards(AuthGuard('jwt'))
+  async remove(
+    @CurrentUser() user: { userId: string },
+    @Param('id') id: string,
+  ) {
+    await this.recipes.deleteRecipe(user.userId, id);
   }
 
   @Patch(':id')

@@ -96,6 +96,17 @@ export class RecipesApplicationService {
     return recipe;
   }
 
+  async deleteRecipe(userId: string, recipeId: string): Promise<void> {
+    const recipe = await this.recipes.findById(recipeId);
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found');
+    }
+    if (recipe.ownerId !== userId) {
+      throw new ForbiddenException('You do not own this recipe');
+    }
+    await this.recipes.delete(recipeId);
+  }
+
   async getPublicFeed() {
     return this.recipes.findAll();
   }
